@@ -1,0 +1,93 @@
+menuconfig LED_SUBSYSTEM
+	bool "LED Subsystem"
+	default y
+	help
+	  This option allows you to configure the LED settings for the application. You can choose the blink speed, set the blink time, and enable advanced LED settings such as brightness and fade duration.	
+
+if LED_SUBSYSTEM
+
+choice
+
+	prompt "LED blink speed"
+	default BLINK_SPEED_1000MS
+	help
+	  Choose the mode of operation for the LED. The available options are:
+	  - BLINK_SPEED_250MS: The LED is blinking at 250ms interval.
+	  - BLINK_SPEED_1000MS: The LED is blinking at 1000ms interval.
+	  - BLINK_SPEED_2000MS: The LED is blinking at 2000ms interval.
+
+config BLINK_SPEED_250MS
+	bool "250ms (slow)"
+	help
+	  The LED will blink at a speed of 250 milliseconds.
+
+config BLINK_SPEED_500MS
+	bool "500ms (medium)"
+	help
+	  The LED will blink at a speed of 500 milliseconds.
+
+config BLINK_SPEED_1000MS
+	bool "1s (medium)"
+	help
+	  The LED will blink at a speed of 1000 milliseconds.
+	
+config BLINK_SPEED_2000MS
+	bool "2s (fast)"
+	help
+	  The LED will blink at a speed of 2000 milliseconds.	
+
+endchoice
+
+config LED_BLINK_TIME_MS
+	int
+	default 250 if BLINK_SPEED_250MS
+	default 500 if BLINK_SPEED_500MS
+	default 1000 if BLINK_SPEED_1000MS
+	default 2000 if BLINK_SPEED_2000MS
+	range 100 5000
+	help
+	  Set the blink time for the LED in milliseconds. The value can be set between 100 and 5000 milliseconds. This option controls how fast the LED blinks when it is enabled.
+
+menuconfig LED_ADVANCED
+	bool "Advanced LED settings"
+	depends on LED_BLINK_TIME_MS>0
+	help
+	  Enable this option to access advanced LED settings such as brightness and fade duration. When enabled, additional configuration options will be available.
+
+if LED_ADVANCED
+
+config LED_BRIGHTNESS
+	int "LED brightness (0-100)"
+	default 100
+	range 0 100
+	help
+	  Set the brightness level of the LED. The value can be set between 0 and 100, where 0 means the LED is off and 100 means full brightness. This option is only available if LED_ADVANCED is enabled.
+
+config LED_FADE_DURATION_MS
+	int "LED fade duration (ms)"
+	default 500
+	range 0 5000
+	help	
+	  Set the fade duration for the LED in milliseconds. The value can be set between 100 and 2000 milliseconds. This option controls how long it takes for the LED to fade in and out when it is enabled.
+
+menu "Expert settings"
+	visible if LED_ADVANCED
+
+config ENABLE_LED_DEBUGGING
+	bool "Enable LED debugging"
+	default n
+	help
+	  Enable this option to turn on debugging messages for the LED subsystem. This can be useful for troubleshooting and development purposes. When enabled, additional debug information will be printed to the console.
+
+config CUSTOM_BLINK_PATTERN
+	bool "Custom blink pattern"
+	default n
+	help
+	  Specify a custom LED pattern using a string of characters. Each character represents a different LED state (e.g., '1' for on, '0' for off). This option allows you to create complex LED patterns for your application. The string can be up to 100 characters long.
+
+endmenu # Expert settings
+
+endif # LED_ADVANCED
+endif # LED_SUBSYSTEM
+
+source "Kconfig.zephyr"
