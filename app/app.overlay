@@ -1,0 +1,6 @@
+/ {
+    aliases {
+        /* Syntax: alias-name = &node_label; */
+        app-led = &green_led;
+    };
+};
