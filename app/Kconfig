@@ -91,8 +91,9 @@ endif # LED_ADVANCED
 endif # LED_SUBSYSTEM
 
 config APP_HEARTBEAT_PERIOD_MS
-	int "application heart beat (ms)"
-	default 300
+	int "Application heartbeat period (ms)"
+	default 500
+	range 100 2000
 	help
 	  Specify a custom LED pattern using a string of characters. Each character represents a different LED state (e.g., '1' for on, '0' for off). This option allows you to create complex LED patterns for your application. The string can be up to 100 characters long.
 
