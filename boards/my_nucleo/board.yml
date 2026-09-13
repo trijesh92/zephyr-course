@@ -1,0 +1,6 @@
+board:
+  name: my_nucleo
+  full_name: My Nucleo F767ZI development board
+  vendor: rt
+  socs:
+    - name: stm32f767xx
