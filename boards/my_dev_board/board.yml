@@ -1,6 +1,0 @@
-board:
-  name: my_dev_board
-  full_name: My development board
-  vendor: rt
-  socs:
-    - name: stm32f767xx
