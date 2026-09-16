@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Zephyr-Win32",
+            "compilerPath": "C:/Users/trije/zephyr-sdk-1.0.1/gnu/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe",
+            "cStandard": "c11",
+            "intelliSenseMode": "gcc-arm",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+        }
+    ],
+    "version": 4
+}
