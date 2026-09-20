@@ -1,0 +1,28 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch",
+			"device": "nucleo_f767zi",
+			"cwd": "${workspaceFolder}",
+			"executable": "build/zephyr/zephyr.elf",
+			"request": "launch",
+			"type": "cortex-debug",
+			"runToEntryPoint": "main",
+			"servertype": "stlink",
+			"gdbPath": "C:/Users/trije/zephyr-sdk-1.0.1/gnu/arm-zephyr-eabi/bin/arm-zephyr-eabi-gdb",
+			"preLaunchTask": "West Build"
+		},
+		{
+			"name": "Attach",
+			"device": "nucleo_f767zi",
+			"cwd": "${workspaceFolder}",
+			"executable": "build/zephyr/zephyr.elf",
+			"request": "attach",
+			"type": "cortex-debug",
+			"runToEntryPoint": "main",
+			"servertype": "stlink",
+			"gdbPath": "C:/Users/trije/zephyr-sdk-1.0.1/gnu/arm-zephyr-eabi/bin/arm-zephyr-eabi-gdb",
+		},
+	]
+}
