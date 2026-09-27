@@ -1,6 +1,11 @@
 / {
-    aliases {
-        /* Syntax: alias-name = &node_label; */
-        app-led = &green_led;
+    rt_driver0: rt_driver {
+        compatible = "rt,driver";
+        status = "okay";
+    };
+
+    rt_driver1: rt_driver1 {
+        compatible = "rt,driver";
+        status = "okay";
     };
 };

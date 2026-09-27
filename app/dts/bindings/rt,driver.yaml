@@ -1,0 +1,3 @@
+description: "My Simple GPIO driver"
+compatible: "rt,driver"
+include: base.yaml
