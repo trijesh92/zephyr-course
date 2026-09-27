@@ -1,3 +1,9 @@
 description: "My Simple GPIO driver"
 compatible: "rt,driver"
 include: base.yaml
+
+properties:
+  update-interval-ms:
+    type: int
+    default: 1000
+    description: Default measurement or update interval in milliseconds
