@@ -47,64 +47,53 @@ void led_blink(void)
 
 // -----------------------------------------------------------------------------------
 
-struct rt_driver_data {
-    uint32_t current_value;
-    uint32_t threshold;       /* Value we will change at runtime */
-};
-
-static int impl_rt_driver_set_threshold(const struct device *dev, uint32_t threshold)
+static int channel_get_my_impl(
+  const struct device *dev, 
+  enum sensor_channel chan, 
+  struct sensor_value *val)
 {
-    struct rt_driver_data *data = dev->data;
-    
-    /* Modify driver data at runtime */
-    data->threshold = threshold;
-    LOG_INF("Runtime data updated: threshold set to %u", data->threshold);
-    led_blink(); // Blink LED to indicate threshold change
-    return 0;
+    /* Implement your channel_get logic here */
+    LOG_INF("Getting channel value for channel: %d", chan);
+    return 0; // Return appropriate status
 }
-
-static int impl_rt_driver_get_threshold(const struct device *dev, uint32_t *value)
-{
-    struct rt_driver_data *data = dev->data;
-
-    if (!value) {
-        return -EINVAL;
-    }
-    led_blink(); // Blink LED to indicate threshold read
-    *value = data->threshold;
-
-    return 0;
-}
-
-// --------------------------------------------------------------------------------
-
 
 static int init(const struct device *dev)
 {
     /* Implement your initialization logic here */
-    struct rt_driver_data *data = dev->data;
-    data->current_value = 100;
-    data->threshold = 50;
     LOG_INF("Initializing RT driver");
     init_led();
     return 0; // Return appropriate status
 }
 
-static const struct rt_driver_api rt_driver_driver_api = {
-    .set_threshold = impl_rt_driver_set_threshold,
-    .get_threshold     = impl_rt_driver_get_threshold,
+static int rt_driver_sample_fetch(const struct device *dev, enum sensor_channel chan)
+{
+    /* Implement your sample_fetch logic here */
+    LOG_INF("Fetching sample for channel: %d", chan);
+    led_on(); // Turn off LED once to indicate sample fetch
+    return 0; // Return appropriate status
+}
+
+static int rt_driver_channel_get(const struct device *dev, enum sensor_channel chan, struct sensor_value *val)
+{
+    /* Implement your channel_get logic here */
+    LOG_INF("Getting channel value for channel: %d", chan);
+    led_off(); // Turn on LED once to indicate channel get
+    return channel_get_my_impl(dev, chan, val);
+}
+
+static DEVICE_API(sensor, api_rt_driver) = {
+    .sample_fetch = rt_driver_sample_fetch,
+    .channel_get = rt_driver_channel_get,
 };
 
 #define RT_DRIVER_INIT(inst)\
-    static struct rt_driver_data rt_driver_data_##inst;\
-    \
     DEVICE_DT_INST_DEFINE(inst,\
                           init,\
                           NULL,\
-                          &rt_driver_data_##inst,\
+                          NULL,\
                           NULL,\
                           POST_KERNEL,\
                           80,\
-                          &rt_driver_driver_api);
+                          &api_rt_driver);
 
 DT_INST_FOREACH_STATUS_OKAY(RT_DRIVER_INIT)
