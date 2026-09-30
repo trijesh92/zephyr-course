@@ -10,6 +10,7 @@ LOG_MODULE_REGISTER(rt_driver, LOG_LEVEL_INF);
 #define SLEEP_TIME_MS 300
 #define LED_NODE DT_NODELABEL(green_led)
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
+volatile static uint32_t s_led_blink_speed_ms = SLEEP_TIME_MS; // Default blink speed
 
 void init_led(void)
 {
@@ -40,12 +41,16 @@ void led_off(void)
 void led_blink(void)
 {
     led_on();
-    k_msleep(SLEEP_TIME_MS);
+    k_msleep(s_led_blink_speed_ms);
     led_off();
-    k_msleep(SLEEP_TIME_MS);
+    k_msleep(s_led_blink_speed_ms);
 }
 
 // -----------------------------------------------------------------------------------
+
+struct rt_driver_data {
+    struct rt_driver_config_data config;
+};
 
 static int channel_get_my_impl(
   const struct device *dev, 
@@ -81,19 +86,52 @@ static int rt_driver_channel_get(const struct device *dev, enum sensor_channel c
     return channel_get_my_impl(dev, chan, val);
 }
 
-static DEVICE_API(sensor, api_rt_driver) = {
-    .sample_fetch = rt_driver_sample_fetch,
-    .channel_get = rt_driver_channel_get,
+/* Extension API Implementation */
+static int rt_driver_impl_set_data(const struct device *dev, const struct rt_driver_config_data *data)
+{
+    struct rt_driver_data *drv_data = dev->data;
+
+    if (data == NULL) {
+        return -EINVAL;
+    }
+
+    s_led_blink_speed_ms = data->blink_speed_ms;
+    LOG_INF("Data updated: blink speed = %u", s_led_blink_speed_ms);
+
+    return 0;
+}
+
+static int rt_driver_impl_get_data(const struct device *dev, struct rt_driver_config_data *data)
+{
+    struct rt_driver_data *drv_data = dev->data;
+
+    if (data == NULL) {
+        return -EINVAL;
+    }
+
+    *data = (struct rt_driver_config_data){ .blink_speed_ms = s_led_blink_speed_ms };
+    return 0;
+}
+
+static const struct rt_driver_api api_rt_driver = {
+    .sensor_api = {
+        .sample_fetch = rt_driver_sample_fetch,
+        .channel_get = rt_driver_channel_get,
+    },
+    .set_data = rt_driver_impl_set_data,
+    .get_data = rt_driver_impl_get_data,
 };
 
-#define RT_DRIVER_INIT(inst)\
-    DEVICE_DT_INST_DEFINE(inst,\
-                          init,\
-                          NULL,\
-                          NULL,\
-                          NULL,\
-                          POST_KERNEL,\
-                          80,\
+#define RT_DRIVER_INIT(inst)                                              \
+    static struct rt_driver_data rt_driver_data_##inst;                  \
+                                                                          \
+    DEVICE_DT_INST_DEFINE(inst,                                           \
+                          init,                                           \
+                          NULL,                                           \
+                          &rt_driver_data_##inst,                         \
+                          NULL,                                           \
+                          POST_KERNEL,                                    \
+                          80,                                             \
                           &api_rt_driver);
 
 DT_INST_FOREACH_STATUS_OKAY(RT_DRIVER_INIT)
