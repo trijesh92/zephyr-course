@@ -89,8 +89,6 @@ static int rt_driver_channel_get(const struct device *dev, enum sensor_channel c
 /* Extension API Implementation */
 static int rt_driver_impl_set_data(const struct device *dev, const struct rt_driver_config_data *data)
 {
-    struct rt_driver_data *drv_data = dev->data;
-
     if (data == NULL) {
         return -EINVAL;
     }
@@ -103,7 +101,6 @@ static int rt_driver_impl_set_data(const struct device *dev, const struct rt_dri
 
 static int rt_driver_impl_get_data(const struct device *dev, struct rt_driver_config_data *data)
 {
-    struct rt_driver_data *drv_data = dev->data;
 
     if (data == NULL) {
         return -EINVAL;
