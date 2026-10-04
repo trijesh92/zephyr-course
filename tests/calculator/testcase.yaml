@@ -18,5 +18,5 @@ tests:
 
   # Hardware scenario: same unit tests running on an nRF54L15DK.
   example.unit.calculator.hw:
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    platform_allow: nucleo_f767zi
     timeout: 120
