@@ -101,7 +101,6 @@ ZTEST(ring_buf_push_pop, test_push_full_returns_enospc)
 	rb_push(2);
 	rb_push(3);
 	rb_push(4);
-	int v;
 	zassert_equal(rb_push(5), -ENOSPC, "Push should fail with ENOSPC");
 }
 
