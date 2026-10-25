@@ -2,50 +2,38 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include "rt_driver.h"
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
-namespace {
-    void test() 
-    {
-        const struct device *dev =DEVICE_DT_GET(DT_NODELABEL(rt_driver0));
-        struct sensor_value val;
-        int ret = sensor_sample_fetch(dev);
-        LOG_INF("Sample fetch ret %d", ret);
-        k_msleep(1000); // Sleep for 1 second to allow time for sample fetch
-        ret = sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &val);
-        LOG_INF("Channel ret %d", ret);
+#define LED0_NODE DT_NODELABEL(green_led)
+#define LED_STACK_SIZE 1024
 
-        struct rt_driver_config_data set_value = { .blink_speed_ms = 100 }; // Initial value to set
-        struct rt_driver_config_data read_value;
-        for(int i = 0; i < 5; ++i) 
-        {
-            set_value.blink_speed_ms = 100 * (i);
-            int ret = rt_driver_set_data(dev, &set_value);
-            if (ret != 0) {
-                LOG_ERR("Failed to set blink speed: %d", ret);
-                return;
-            }
+// define stack for led_task thread
 
-            ret = rt_driver_get_data(dev, &read_value);
-            if (ret != 0) {
-                LOG_ERR("Failed to get blink speed: %d", ret);
-                return;
-            }
+K_THREAD_STACK_DEFINE(led_stack, LED_STACK_SIZE);
+struct k_thread led_thread;
 
-            LOG_INF("Retrieved blink speed: %d (set=%d)", 
-                read_value.blink_speed_ms, 
-                set_value.blink_speed_ms);
-
-            k_msleep(1000); // Sleep for 1 second to allow time for sample fetch
-        }
+void led_task(void *p1, void *p2, void *p3)
+{
+    const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
+    if (!device_is_ready(led.port)) {
+        LOG_ERR("LED device not ready");
+        return;
+    }
+    // blink led in look every 1 second
+    while (1) {
+        gpio_pin_toggle_dt(&led);
+        k_sleep(K_MSEC(1000));
     }
 }
 
 int main(void)
 {
     LOG_INF("Hello World! %s", CONFIG_BOARD);
-    test();
+    // create a thread for led_task
+
+    k_thread_create(&led_thread, led_stack, K_THREAD_STACK_SIZEOF(led_stack),
+                    (k_thread_entry_t)led_task, NULL, NULL, NULL,
+                    K_PRIO_PREEMPT(1), 0, K_NO_WAIT);
     return 0;
 }
