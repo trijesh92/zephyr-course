@@ -1,3 +1,0 @@
-config RT_DRIVER
-  bool "my driver"
-  default y

@@ -1,7 +1,0 @@
-/ {
-    rt_driver0: rt_driver {
-        compatible = "rt,driver";
-        update-interval-ms = <500>;
-        status = "okay";
-    };
-};

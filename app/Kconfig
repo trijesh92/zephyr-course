@@ -1,3 +1,2 @@
 
 source "Kconfig.zephyr"
-rsource "drivers/rt_driver/Kconfig"
