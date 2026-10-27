@@ -40,6 +40,7 @@ static int sensor_read_handler(const struct shell* sh, int argc, char** argv)
     return -EFAULT;
   }
 
+  shell_info(sh,"sensor_channel_get returned: %d", ret);
   return 0;
 }
 
