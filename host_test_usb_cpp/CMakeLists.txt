@@ -1,18 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
-project(zephyr_host_test_usb_cpp LANGUAGES CXX)
+project(zephyr_host_test_usb_cpp_winusb LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find libusb-1.0
-find_package(LibUSB1 REQUIRED)
+# WinUSB is part of Windows SDK - no external package needed
+# Link against setupapi.lib and winusb.lib (already referenced via #pragma comment in source)
 
 add_executable(host_test_usb
     main.cpp
     usb_protocol.h
 )
-
-target_link_libraries(host_test_usb PRIVATE LibUSB1::LibUSB1)
 
 target_compile_options(host_test_usb PRIVATE
     -Wall -Wextra -Wpedantic
@@ -20,4 +18,9 @@ target_compile_options(host_test_usb PRIVATE
 
 if(MSVC)
     target_compile_options(host_test_usb PRIVATE /W4 /EHsc)
+endif()
+
+# Windows-specific link libraries
+if(WIN32)
+    target_link_libraries(host_test_usb PRIVATE setupapi.lib winusb.lib)
 endif()

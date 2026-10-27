@@ -20,6 +20,8 @@
 #define USB_PROTOCOL_H
 
 #include <cstdint>
+#include <windows.h>
+#include <initguid.h>
 
 // USB device identifiers
 #define USB_VENDOR_VID  0x1234u
@@ -47,5 +49,13 @@
 // Frame sizes
 #define USB_VENDOR_CMD_FRAME_SIZE   2u
 #define USB_VENDOR_RESP_FRAME_SIZE  2u
+
+// WinUSB device interface class GUID (all USB devices)
+DEFINE_GUID(GUID_DEVINTERFACE_USB_DEVICE,
+    0xA5DCBF10L, 0x6530, 0x11D2, 0x90, 0x1F, 0x00, 0xC0, 0x4F, 0xB9, 0x51, 0xED);
+
+// WinUSB interface GUID (WinUSB driver)
+DEFINE_GUID(WINUSB_INTERFACE_GUID,
+    0xDC5A3E3DL, 0x9B97, 0x46F6, 0x88, 0x4F, 0xD2, 0xA9, 0x4C, 0x7D, 0x5E, 0x6D);
 
 #endif /* USB_PROTOCOL_H */

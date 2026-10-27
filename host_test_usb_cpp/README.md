@@ -1,7 +1,7 @@
-# Zephyr Board USB Vendor Host Test (C++)
+# Zephyr Board USB Vendor Host Test (C++ + WinUSB)
 
-Host-side test application written in C++ using **libusb-1.0** to communicate
-with the custom USB vendor device on the Zephyr board.
+Host-side test application written in **C++ using the Windows WinUSB API** to communicate
+with the custom USB vendor device on the Zephyr board over bulk endpoints.
 
 ## Protocol
 
@@ -17,36 +17,35 @@ The device exposes:
 - `0x00` OK, `0xFF` ERROR
 - data: LED states (bit0=green, bit1=red)
 
-Vendor control transfers are also supported.
+Vendor control transfers are also supported (vendor-specific control requests).
 
 ## Build (Windows)
 
 ### Prerequisites
 
-1. **libusb-1.0 development package** installed
-   - Download from: https://github.com/libusb/libusb/releases
-   - Or install via vcpkg: `vcpkg install libusb`
-   - Or install via MSYS2: `pacman -S mingw-w64-x86_64-libusb`
-
+1. **Windows SDK** (includes WinUSB API headers and libraries)
 2. **CMake** and a C++ compiler (MinGW, MSVC, etc.)
-
-3. **USB driver** installed on the device via **Zadig**
+3. **WinUSB driver** installed on the device via **Zadig**
    - Download Zadig: https://zadig.akeo.ie/
    - Plug in the FRDM board (VID=0x1234, PID=0x5678)
    - Run Zadig → Options → List All Devices
-   - Select your device, choose **WinUSB** or **libusb-win32**, click Install Driver
+   - Select your device, choose **WinUSB** driver, click **Install Driver**
 
-### Build steps
+### Build steps (MinGW)
 
 ```powershell
-# Create build directory
 mkdir zephyr-course/host_test_usb_cpp/build
 cd zephyr-course/host_test_usb_cpp/build
-
-# Configure (example for MinGW Makefiles)
 cmake -G "MinGW Makefiles" ..
+cmake --build .
+```
 
-# Build
+### Build steps (MSVC / Visual Studio)
+
+```powershell
+mkdir zephyr-course/host_test_usb_cpp/build
+cd zephyr-course/host_test_usb_cpp/build
+cmake ..
 cmake --build .
 ```
 
@@ -89,7 +88,16 @@ host_test_usb.exe --vid 0x1234 --pid 0x5678 --timeout 3000 status
 
 | Problem | Solution |
 |---------|----------|
-| `libusb-1.0.dll not found` | Place `libusb-1.0.dll` next to `host_test_usb.exe` or add it to PATH |
-| `Device not found` | Make sure the board is connected, powered on, and the firmware is running. Install WinUSB/libusb driver via Zadig. |
+| `Device not found` | Make sure the board is connected, powered on, and the firmware is running. Install WinUSB driver via Zadig. |
 | `Access denied` | Make sure no other program has the device open. Reinstall driver via Zadig. |
 | `Pipe error` | The device may be busy. Try again or reset the board. |
+| `WinUsb_Initialize failed` | The WinUSB driver may not be properly installed. Reinstall via Zadig. |
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `main.cpp` | CLI application using WinUSB API (SetupAPI + WinUsb.dll) |
+| `usb_protocol.h` | Protocol constants (VID/PID, endpoints, opcodes, frame sizes, GUIDs) |
+| `CMakeLists.txt` | CMake build configuration (Windows SDK only) |
+| `README.md` | Build and usage instructions |
