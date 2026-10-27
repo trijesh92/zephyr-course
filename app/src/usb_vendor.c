@@ -624,11 +624,8 @@ static int vendor_class_register(struct usbd_context *ctx,
     if (ret) {
         return ret;
     }
-    ret = usbd_add_descriptor(ctx, &vendor_cfg_str);
-    if (ret) {
-        return ret;
-    }
 
+    /* Configuration string descriptor is added by usbd_add_configuration */
     ret = usbd_add_configuration(ctx, speed, &vendor_cfg);
     if (ret) {
         return ret;
