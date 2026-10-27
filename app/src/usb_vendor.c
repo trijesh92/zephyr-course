@@ -650,9 +650,10 @@ static int vendor_usb_init(const struct usbd_context *ctx)
         USBD_SPEED_HS,
 #endif
     };
+    int ret;
 
     for (size_t i = 0; i < ARRAY_SIZE(speeds); i++) {
-        int ret = vendor_class_register((struct usbd_context *)ctx, speeds[i], 1);
+        ret = vendor_class_register((struct usbd_context *)ctx, speeds[i], 1);
         if (ret) {
             LOG_ERR("USB: failed to register class for speed %u: %d",
                     (unsigned int)speeds[i], ret);
@@ -660,7 +661,22 @@ static int vendor_usb_init(const struct usbd_context *ctx)
         }
     }
 
-    return usbd_init((struct usbd_context *)ctx);
+    /* Set device class triple explicitly for host compatibility */
+    ret = usbd_device_set_code_triple((struct usbd_context *)ctx, USBD_SPEED_FS,
+                                      USB_BCC_VENDOR, 0x00, 0x00);
+    if (ret) {
+        LOG_ERR("USB: failed to set device code triple: %d", ret);
+        return ret;
+    }
+
+    ret = usbd_init((struct usbd_context *)ctx);
+    if (ret) {
+        LOG_ERR("USB: usbd_init failed: %d", ret);
+        return ret;
+    }
+
+    LOG_INF("USB: device stack initialized");
+    return 0;
 }
 
 static int vendor_usb_enable(const struct usbd_context *ctx)
