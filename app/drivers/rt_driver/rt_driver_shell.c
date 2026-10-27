@@ -4,6 +4,9 @@
 
 const char* c_driver = "rt_driver0";
 
+#define MIN_INTERVAL_MS 100
+#define MAX_INTERVAL_MS 5000
+
 static int sensor_fetch_handler(const struct shell* sh, int argc, char** argv)
 {
   const struct device *dev = shell_device_get_binding(c_driver);
@@ -65,6 +68,11 @@ static int sensor_set_handler(const struct shell* sh, int argc, char** argv)
 
   if (err==-EINVAL || err==-ERANGE) {
       shell_error(sh, "Invalid argument");
+      return -EFAULT;
+  }
+
+  if (blink_speed < MIN_INTERVAL_MS || blink_speed > MAX_INTERVAL_MS) {
+      shell_error(sh, "Blink speed out of range");
       return -EFAULT;
   }
 
