@@ -2,6 +2,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include "usb_vendor.h"
+
 LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
 #define GREEN_LED_NODE DT_NODELABEL(green_led)
@@ -68,5 +70,9 @@ int main(void)
     k_thread_create(&red_led_thread, red_led_stack, K_THREAD_STACK_SIZEOF(red_led_stack),
                     (k_thread_entry_t)red_led_blink, NULL, NULL, NULL,
                     K_PRIO_PREEMPT(1), 0, K_NO_WAIT);
+
+    /* Initialize custom USB vendor device (bulk IN/OUT endpoints) */
+    usb_vendor_init();
+
     return 0;
 }
