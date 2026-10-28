@@ -24,8 +24,8 @@
 #include <initguid.h>
 
 // USB device identifiers
-#define USB_VENDOR_VID  0x1234u
-#define USB_VENDOR_PID  0x5678u
+#define USB_VENDOR_VID  1234u
+#define USB_VENDOR_PID  5678u
 
 // Bulk endpoint addresses
 #define USB_VENDOR_BULK_OUT_EP_ADDR  0x01u

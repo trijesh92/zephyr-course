@@ -41,6 +41,7 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <format>
 
 #include <windows.h>
 #include <setupapi.h>
@@ -125,10 +126,15 @@ public:
             }
 
             // Check VID/PID by reading device properties
-            if (!check_vid_pid(h, vid, pid)) {
-                CloseHandle(h);
-                member_index++;
-                continue;
+            std::string path(detail->DevicePath);
+            std::string s = std::format("{:}", pid); // s == 2a
+
+            int res = path.find(s);
+            if (res == std::string::npos)
+            {
+              CloseHandle(h);
+              member_index++;
+              continue;
             }
 
             // Initialize WinUSB
