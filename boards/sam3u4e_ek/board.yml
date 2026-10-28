@@ -1,0 +1,6 @@
+board:
+  name: sam3u4e_ek
+  full_name: Atmel SAM3U4E Evaluation Kit
+  vendor: atmel
+  socs:
+    - name: sam3u4e

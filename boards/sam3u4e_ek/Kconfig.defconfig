@@ -1,0 +1,14 @@
+# SAM3U4E-EK board configuration
+
+# Copyright (c) 2026
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_SAM3U4E_EK
+
+config GPIO
+	default y
+
+config CONSOLE
+	default n
+
+endif # BOARD_SAM3U4E_EK

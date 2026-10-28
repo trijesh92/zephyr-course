@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+
+# Atmel SAM3U4E-EK board: fixed (non-overridable) configuration
+
+CONFIG_GPIO=y
+CONFIG_CONSOLE=n
+CONFIG_FLASH_SIZE=256
+CONFIG_SRAM_SIZE=48
+CONFIG_FLASH_BASE_ADDRESS=0x0
+CONFIG_SRAM_BASE_ADDRESS=0x20000000
