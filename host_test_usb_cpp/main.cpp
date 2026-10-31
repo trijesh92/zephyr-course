@@ -118,7 +118,7 @@ public:
                 detail->DevicePath,
                 GENERIC_READ | GENERIC_WRITE,
                 FILE_SHARE_READ | FILE_SHARE_WRITE,
-                nullptr, OPEN_EXISTING, 0, nullptr);
+                nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr);
 
             if (h == INVALID_HANDLE_VALUE) {
                 member_index++;
@@ -439,8 +439,9 @@ int main(int argc, char* argv[]) {
         } else if (arg == "--help" || arg == "-h") {
             print_usage(argv[0]);
             return 0;
-        } else if (arg[0] != '-') {
+        } else if (arg[0] != '-' && command.empty()) {
             command = arg;
+        } else if (arg[0] != '-' && !command.empty()) {
         } else {
             std::cerr << "Unknown option: " << arg << std::endl;
             print_usage(argv[0]);
@@ -472,12 +473,8 @@ int main(int argc, char* argv[]) {
         result = cmd_status(usb, timeout_ms);
     } else if (command == "led-on" || command == "led-off") {
         if (arg_idx >= argc) {
-            std::cerr << "Error: " << command << " requires a LED argument (G or R)"
-                      << std::endl;
-            result = 1;
-        } else {
-            char led_letter = argv[arg_idx][0];
-            result = cmd_set_led(usb, command, led_letter, timeout_ms);
+          char led_letter = argv[2][0];
+          result = cmd_set_led(usb, command, led_letter, timeout_ms);
         }
     } else if (command == "ctrl-status") {
         result = cmd_control_status(usb, timeout_ms);
