@@ -9,15 +9,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(host_test_usb
     src/main.cpp
+    src/usb_cli.cpp
     src/usb_connection.cpp
     src/usb_protocol.cpp
     src/usb_app.cpp
     include/usb_connection.h
     include/usb_protocol.h
     include/usb_app.h
+    include/usb_cli.h
 )
 
-target_include_directories(host_test_usb PRIVATE include)
+target_include_directories(host_test_usb PRIVATE include thirdparty)
 
 target_compile_options(host_test_usb PRIVATE -Wall)
 
